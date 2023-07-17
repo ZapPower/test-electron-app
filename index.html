@@ -2,26 +2,25 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
         <title>Hello World!</title>
-        <script src="excelHandler.js"></script>
-      </head>
-      <body>
-        <h1>Hello World!</h1>
-        <p>
-            We are using Node.js <span id="node-version"></span>,
-            Chromium <span id="chrome-version"></span>,
-            and Electron <span id="electron-version"></span>.
-        </p>
-      </body>
-      <body>
-        <label> Import excel sheet here: </label>
-        <form id="importExcel">
-            <input type="file" id="excelfile" name="excel">
-        </form>
-        <button id="excelsubmit">Submit</button>
-        <p>
-            Sheet Name: <span id="sheetname"></span>
-        </p>
-      </body>
+    </head>
+    <body>
+      <h1>Hello World!</h1>
+      <p>
+          We are using Node.js <span id="node-version"></span>,
+          Chromium <span id="chrome-version"></span>,
+          and Electron <span id="electron-version"></span>.
+      </p>
+    </body>
+    <body>
+      <script src="excelHandler.js"></script>
+      <label> Import excel sheet here: </label>
+      <form method="GET" id="importExcel">
+          <input type="file" id="excelfile" name="excel">
+          <button type="button" id="excelsubmit" onclick="loadexcel(this.form)">Submit</button>
+      </form>
+      <p>
+          Sheet Name: <span id="sheetname"></span>
+      </p>
+    </body>
 </html>

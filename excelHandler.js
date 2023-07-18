@@ -66,3 +66,15 @@ function filterAndStyle() {
         }
     }
 }
+
+/*
+Potential method for creating date & court rows:
+
+delete column headers
+begin at top of table, storing index as 15
+
+check & record court, then date, then delete respective elements (check same index twice as they are being deleted)
+if it is the first instance of date/court, insert table element with colspan=6 attribute using .insertBefore()
+** apply date first, then court
+record new index and move to next element (i += 6)
+*/

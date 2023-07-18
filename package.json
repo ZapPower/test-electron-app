@@ -1,5 +1,5 @@
 {
-  "name": "MSD Calendar Tool",
+  "name": "test-electron-app",
   "version": "1.0.0",
   "description": "Tool used to generate a law calendar (purely client-side)",
   "main": "main.js",

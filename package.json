@@ -1,7 +1,7 @@
 {
-  "name": "test-electron-app",
+  "name": "MSD Calendar Tool",
   "version": "1.0.0",
-  "description": "Testing for calendar",
+  "description": "Tool used to generate a law calendar (purely client-side)",
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

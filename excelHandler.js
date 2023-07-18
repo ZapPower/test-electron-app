@@ -1,41 +1,68 @@
 const XLSX = require('xlsx');
 const {ipcRenderer} = require('electron')
-const fs = require('fs');
-
-// const submitButton = document.getElementById('excelsubmit')
-// submitButton.addEventListener('click', () => {
-//     loadexcel()
-// })
 
 // loads and parses excel file using xlsx
 function loadexcel() {
-
+    // request the file from the main process
     ipcRenderer.send('requestExcelFile');
 
+    // when file is sent back, open and parse it into JSON
     ipcRenderer.on('excelFile', (event, filepath) => {
-        console.log(filepath.toString())
-        fs.readFile(filepath.toString(), 'utf-8', (err, data) => {
-            if (err) {
-                alert("An error occurred when reading the file : " + err.message);
-                return;
-            }
-            var workbook = XLSX.read(data);
-            var sheet = workbook.SheetNames[0];
-            document.getElementById('sheetname').innerText = sheet;
-        });
-        
-    })
+        // create workbook
+        var workbook = XLSX.read(filepath, {type: 'file', cellDates: true});
+        var sheet = workbook.SheetNames[0];
+        // display sheet name
+        document.getElementById('sheetname').innerText = sheet;
+        // convert to JSON. Parse as raw (string) for easier formatting
+        var sheetJSON = XLSX.utils.sheet_to_json(workbook.Sheets[sheet], {raw: false});
 
-    // const f = form.excelfile.files;
-    // var workbook = XLSX.read(f);
-    // var sheet = workbook.SheetNames[0];
-    // document.getElementById('sheetName').innerText = sheet;
+        // get new dictionary version
+        calendarDict = getAppearanceDict(sheetJSON);
+        // apply HTML version of new dictionary
+        document.getElementById('calendar').innerHTML = createAppearaneHTML(calendarDict);
+        // filter and style the applied HTML
+        filterAndStyle();
+        // TODO: after finishing styling, generate PDF version of table to be downloaded by client
+    });   
 }
 
+// creates and returns a new dictionary with only the necessary data obtained from excel sheet
+function getAppearanceDict(sheet) {
+    calendar = [];
+    for (var row = 0; row < sheet.length; row++) {
+        calendar.push({});
+        calendar[row]['File No.'] = sheet[row]['Client Matter']
+        calendar[row]['Case Name'] = sheet[row]['Case Name'];
+        calendar[row]['Adj\'ed?'] = " ";
+        calendar[row]['Room/Part'] = sheet[row]['Part/Room'];
+        calendar[row]['Time'] = sheet[row]['Appearance Time'];
+        calendar[row]['Detail'] = sheet[row]['Type'];
+        calendar[row]['County'] = sheet[row]['County'];
+        calendar[row]['Date'] = sheet[row]['Appearance Date']
+    }
+    return calendar;
+}
 
+// creates and returns an HTML table consisting of the given dictionary using SheetJS
+function createAppearaneHTML(calendar) {
+    newSheet = XLSX.utils.json_to_sheet(calendar);
+    table = XLSX.utils.sheet_to_html(newSheet);
+    return table;
+}
 
-// function functionthingy() {
-//     alert("alert")
-//     const thingy = document.getElementById('thingy')
-//     thingy.innerHTML = "New Thingy!!!"
-// }
+// TODO: remove date and county columns and give each type their own row
+// filters the auto-generated HTML from SheetJS & styles the generated table
+function filterAndStyle() {
+    // get table elements
+    var elements = document.getElementsByTagName('td');
+    for (var i = 0; i < elements.length; i++) {
+        elem = elements[i];
+        // check if element is in first row
+        if (elem.id.slice(-1) == "1" && elem.id.length == 6) {
+            // make it a header
+            elem.outerHTML = `<th id="${elem.id}">${elem.innerText}</th>`;
+            // decrement counter as this operation removes element from the list
+            i--;
+        }
+    }
+}

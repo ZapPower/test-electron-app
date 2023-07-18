@@ -34,6 +34,8 @@ app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit()
 });
 
+// when received request for getting excel file, open system dialog to allow user to select the excel file
+// and send the file path back to the renderer process
 ipcMain.on('requestExcelFile', (event) => {
     dialog.showOpenDialog({
         title: "Select the excel file (.XLSX) to be used",
@@ -49,13 +51,3 @@ ipcMain.on('requestExcelFile', (event) => {
         console.log(err);
     });
 });
-
-// load excel file when submitted and display the name
-// document.getElementById('excelSubmit').addEventListener('click', function() {
-//     console.log('began load');
-//     const f = document.getElementById('excelFile');
-//     var workbook = XLSX.read(f);
-//     var sheet = workbook.getActiveSheet();
-//     document.getElementById('sheetName').innerText = sheet.getName();
-// });
-

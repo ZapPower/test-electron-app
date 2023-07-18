@@ -2,26 +2,16 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>Hello World!</title>
+        <title>MSD Calendar Tool</title>
+        <link rel="stylesheet" href="stylesheet.css">
     </head>
-    <body>
-      <h1>Hello World!</h1>
-      <p>
-          We are using Node.js <span id="node-version"></span>,
-          Chromium <span id="chrome-version"></span>,
-          and Electron <span id="electron-version"></span>.
-      </p>
-    </body>
     <body>
       <script src="excelHandler.js"></script>
       <label> Import excel sheet here: </label>
-      <!-- <form method="GET" id="importExcel">
-          <input type="file" id="excelfile" name="excel">
-          <button type="button" id="excelsubmit" onclick="loadexcel(this.form)">Submit</button>
-      </form> -->
       <button type="button" id="excelButton" onclick="loadexcel()">Choose Excel File</button>
       <p>
           Sheet Name: <span id="sheetname"></span>
       </p>
+      <span id="calendar"></span>
     </body>
 </html>

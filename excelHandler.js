@@ -50,7 +50,7 @@ function createAppearaneHTML(calendar) {
     return table;
 }
 
-// TODO: remove date and county columns and give each type their own row
+// TODO: remove date and county columns and give each type their own row -- use colspan attribute **
 // filters the auto-generated HTML from SheetJS & styles the generated table
 function filterAndStyle() {
     // get table elements

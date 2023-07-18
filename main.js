@@ -1,5 +1,5 @@
-const { app, BrowserWindow, ipcMain } = require('electron')
-const path = require('path')
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const path = require('path');
 // const XLSX = require('xlsx')
 
 
@@ -14,25 +14,41 @@ const createWindow = () => {
             nodeIntegration: true,
             contextIsolation: false
         }
-    })
+    });
 
-    win.loadFile('index.html')
+    win.loadFile('index.html');
 }
 
 // listen for the ready signal to create the window (createWindow can only be called after the ready signal)
 app.whenReady().then(() => {
-    createWindow()
+    createWindow();
 
     // MacOS only -- creates a new window if all previous windows have been closed
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow()
-    })
+    });
 })
 
 // exit process if the window is closed
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit()
-})
+});
+
+ipcMain.on('requestExcelFile', (event) => {
+    dialog.showOpenDialog({
+        title: "Select the excel file (.XLSX) to be used",
+        buttonLabel: "Submit"
+    }).then(file => {
+        console.log("File canceled: " + file.canceled);
+        if (!file.canceled) {
+            const filepath = file.filePaths[0].toString();
+            console.log("Filepath: " + filepath);
+            event.reply('excelFile', filepath);
+        }
+    }).catch(err => {
+        console.log(err);
+    });
+});
 
 // load excel file when submitted and display the name
 // document.getElementById('excelSubmit').addEventListener('click', function() {

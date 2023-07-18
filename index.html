@@ -15,10 +15,11 @@
     <body>
       <script src="excelHandler.js"></script>
       <label> Import excel sheet here: </label>
-      <form method="GET" id="importExcel">
+      <!-- <form method="GET" id="importExcel">
           <input type="file" id="excelfile" name="excel">
           <button type="button" id="excelsubmit" onclick="loadexcel(this.form)">Submit</button>
-      </form>
+      </form> -->
+      <button type="button" id="excelButton" onclick="loadexcel()">Choose Excel File</button>
       <p>
           Sheet Name: <span id="sheetname"></span>
       </p>

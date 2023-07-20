@@ -1,5 +1,5 @@
 const XLSX = require('xlsx');
-const {ipcRenderer} = require('electron')
+const {ipcRenderer} = require('electron');
 
 // loads and parses excel file using xlsx
 function loadexcel() {
@@ -31,14 +31,14 @@ function getAppearanceDict(sheet) {
     calendar = [];
     for (var row = 0; row < sheet.length; row++) {
         calendar.push({});
-        calendar[row]['File No.'] = sheet[row]['Client Matter']
+        calendar[row]['File No.'] = sheet[row]['Client Matter'];
         calendar[row]['Case Name'] = sheet[row]['Case Name'];
         calendar[row]['Adj\'ed?'] = " ";
         calendar[row]['Room/Part'] = sheet[row]['Part/Room'];
         calendar[row]['Time'] = sheet[row]['Appearance Time'];
         calendar[row]['Detail'] = sheet[row]['Type'];
         calendar[row]['County'] = sheet[row]['County'];
-        calendar[row]['Date'] = sheet[row]['Appearance Date']
+        calendar[row]['Date'] = sheet[row]['Appearance Date'];
     }
     return calendar;
 }
@@ -55,6 +55,10 @@ function createAppearaneHTML(calendar) {
 function filterAndStyle() {
     // get table elements
     var elements = document.getElementsByTagName('td');
+    elements[7].remove();
+    elements[6].remove();
+    var dateStor = undefined;
+    var courtStor = undefined;
     for (var i = 0; i < elements.length; i++) {
         elem = elements[i];
         // check if element is in first row
@@ -64,17 +68,31 @@ function filterAndStyle() {
             // decrement counter as this operation removes element from the list
             i--;
         }
+
+        // check element is date
+        if (elem.id.charAt(4) == "H") {
+            // check if stored date matches. If not push new element at stored index & delete
+            if (elem.innerText != dateStor) {
+                dateStor = elem.innerText;
+                newParent = document.createElement("tr");
+                newParent.innerHTML = `<th id="${elem.id}" colspan=6>${elem.innerText}</th>`;
+                elements[i].parentNode.parentNode.insertBefore(newParent, elements[i].parentNode);
+            }
+            elements[i].remove();
+            i--;
+        }
+
+        // check if elem is court
+        if (elem.id.charAt(4) == "G") {
+            // check if stored court matches. If not push new element at previous index & delete
+            if (elem.innerText != courtStor) {
+                courtStor = elem.innerText;
+                newParent = document.createElement("tr");
+                newParent.innerHTML = `<th id="${elem.id}" colspan=6>${elem.innerText}</th>`;
+                elements[i].parentNode.parentNode.insertBefore(newParent, elements[i].parentNode);
+            }
+            elements[i].remove();
+            i--;
+        }
     }
 }
-
-/*
-Potential method for creating date & court rows:
-
-delete column headers
-begin at top of table, storing index as 15
-
-check & record court, then date, then delete respective elements (check same index twice as they are being deleted)
-if it is the first instance of date/court, insert table element with colspan=6 attribute using .insertBefore()
-** apply date first, then court
-record new index and move to next element (i += 6)
-*/

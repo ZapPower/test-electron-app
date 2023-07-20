@@ -1,11 +1,8 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
-// const XLSX = require('xlsx')
-
 
 // creates a new window of the application
 const createWindow = () => {
-
     const win = new BrowserWindow({
         width: 800,
         height: 600,

@@ -13,7 +13,7 @@ function loadexcel() {
         var sheet = workbook.SheetNames[0];
         // display sheet name
         document.getElementById('sheetname').innerText = sheet;
-        // convert to JSON. Parse as raw (string) for easier formatting
+        // convert to JSON. Parse as string for easier formatting
         var sheetJSON = XLSX.utils.sheet_to_json(workbook.Sheets[sheet], {raw: false});
 
         // get new dictionary version

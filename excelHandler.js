@@ -50,7 +50,16 @@ function createAppearaneHTML(calendar) {
     return table;
 }
 
-// TODO: set size for each element as needed
+/*
+TODO: set size for each element as needed (add CSS classes to each column as needed to specify) 
+ex. 
+HTML:
+class="date"
+CSS:
+.date {
+    width: 10%;
+}
+*/
 // filters the auto-generated HTML from SheetJS & styles the generated table
 function filterAndStyle() {
     // get table elements

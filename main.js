@@ -11,7 +11,8 @@ const createWindow = () => {
             nodeIntegration: true,
             contextIsolation: false
         },
-        resizable: false
+        resizable: false,
+        icon: path.join(__dirname, 'MSD_logo.jpg')
     });
 
     win.loadFile('index.html');

@@ -7,3 +7,27 @@ th {
     background-color: #2a6038;
     color: white;
 }
+
+td {
+    background-color: white;
+}
+
+button {
+    background-color: #68ae7a;
+    color:white;
+    border-radius: 5px;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+p, label {
+    color: white;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+div {
+    border-radius: 5px;
+}
+
+body {
+    background-color: #68ae7a;
+}

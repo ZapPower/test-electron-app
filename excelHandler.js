@@ -1,5 +1,6 @@
 const XLSX = require('xlsx');
 const {ipcRenderer} = require('electron');
+const { jsPDF } = require('jspdf');
 
 // loads and parses excel file using xlsx
 function loadexcel() {
@@ -104,4 +105,21 @@ function filterAndStyle() {
             i--;
         }
     }
+}
+
+// generate downloadable PDF
+function generatePDF() {
+    var doc = new jsPDF({
+        orientation: 'l'
+    });
+    var elem = document.querySelector("#calendar");
+    doc.html(elem, {
+        callback: function (doc) {
+            doc.save();
+        },
+        filename: 'Molod Spitz & DeSantis, PC Appearance Report.pdf',
+        html2canvas: {
+            scale: 0.4
+        }
+    });
 }

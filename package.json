@@ -13,6 +13,9 @@
     "electron": "^25.3.0"
   },
   "dependencies": {
+    "html2canvas": "^1.4.1",
+    "html2pdf": "^0.0.11",
+    "jspdf": "^2.5.1",
     "xlsx": "^0.18.5"
   }
 }

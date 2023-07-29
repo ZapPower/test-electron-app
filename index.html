@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <script src="html2pdf.bundle.min.js"></script>
         <meta charset="UTF-8">
         <title>MSD Calendar Tool</title>
         <link rel="stylesheet" href="stylesheet.css">
@@ -9,6 +10,7 @@
       <script src="excelHandler.js"></script>
       <label> Import excel sheet here: </label>
       <button type="button" id="excelButton" onclick="loadexcel()">Choose Excel File</button>
+      <button type="button" id="createPDF" onclick="generatePDF()">Save PDF</button>
       <p>
           Sheet Name: <span id="sheetname"></span>
       </p>

@@ -51,6 +51,8 @@ ipcMain.on('requestExcelFile', (event) => {
     });
 });
 
+// when recieved request for getting download path, open save dialog and allow user to select path
+// then send the download path back to the renderer process
 ipcMain.on('requestDownloadPath', (event) => {
     dialog.showSaveDialog({
         title: "Choose Path to Download File",

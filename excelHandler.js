@@ -23,8 +23,6 @@ function loadexcel() {
         document.getElementById('calendar').innerHTML = createAppearanceHTML(calendarDict);
         // filter and style the applied HTML
         filterAndStyle();
-        // TODO: after finishing styling, generate PDF version of table to be downloaded by client
-
         // un-hide download PDF button
         document.getElementById('createPDF').style.visibility = 'visible';
     });   

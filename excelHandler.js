@@ -1,5 +1,5 @@
 const XLSX = require('xlsx');
-const {ipcRenderer} = require('electron');
+const { ipcRenderer } = require('electron');
 const { jsPDF } = require('jspdf');
 
 // TODO: MAKE TABLE MODIFYABLE ****
@@ -143,6 +143,15 @@ function filterAndStyle(filetype) {
             i--;
         };
     }
+
+    const header = document.createElement("tr");
+    headerText = "Court";
+    if (filetype == "ebt") {
+        headerText = "EBT";
+    };
+    header.innerHTML = `<th id="calHead" colspan=${colspan} class="calendarHead">${headerText}  Calendar</th>`;
+    elem = document.getElementsByTagName("tr")[0];
+    elem.parentNode.insertBefore(header, elem);
 }
 
 // generate downloadable PDF & prompt client to save

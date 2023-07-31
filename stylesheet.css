@@ -43,3 +43,13 @@ select {
     border-radius: 5px;
     font-family: Georgia, 'Times New Roman', Times, serif;
 }
+
+.calendarHead {
+    background-color: #6da07a;
+    color: black;
+    font-weight: bolder;
+    font-size: larger;
+    text-align: center;
+    height: 50px;
+    line-height: 50px;
+}

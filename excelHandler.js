@@ -20,7 +20,7 @@ function loadexcel() {
         // get new dictionary version
         calendarDict = getAppearanceDict(sheetJSON);
         // apply HTML version of new dictionary
-        document.getElementById('calendar').innerHTML = createAppearaneHTML(calendarDict);
+        document.getElementById('calendar').innerHTML = createAppearanceHTML(calendarDict);
         // filter and style the applied HTML
         filterAndStyle();
         // TODO: after finishing styling, generate PDF version of table to be downloaded by client
@@ -48,7 +48,7 @@ function getAppearanceDict(sheet) {
 }
 
 // creates and returns an HTML table consisting of the given dictionary using SheetJS
-function createAppearaneHTML(calendar) {
+function createAppearanceHTML(calendar) {
     newSheet = XLSX.utils.json_to_sheet(calendar);
     table = XLSX.utils.sheet_to_html(newSheet);
     return table;
@@ -110,19 +110,23 @@ function filterAndStyle() {
     }
 }
 
-// generate downloadable PDF
+// generate downloadable PDF & prompt client to save
 function generatePDF() {
-    var doc = new jsPDF({
-        orientation: 'l'
-    });
-    var elem = document.querySelector("#calendar");
-    doc.html(elem, {
-        callback: function (doc) {
-            doc.save();
-        },
-        filename: 'Molod Spitz & DeSantis, PC Appearance Report.pdf',
-        html2canvas: {
-            scale: 0.4
-        }
+    ipcRenderer.send('requestDownloadPath');
+
+    ipcRenderer.on('downloadPath', (event, filepath) => {
+        var doc = new jsPDF({
+            orientation: 'l'
+        });
+        var elem = document.querySelector("#calendar");
+        doc.html(elem, {
+            callback: function (doc) {
+                doc.save(filepath);
+                alert("File saved to " + filepath);
+            },
+            html2canvas: {
+                scale: 0.4
+            }
+        });
     });
 }

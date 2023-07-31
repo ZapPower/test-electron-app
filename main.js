@@ -50,3 +50,20 @@ ipcMain.on('requestExcelFile', (event) => {
         console.log(err);
     });
 });
+
+ipcMain.on('requestDownloadPath', (event) => {
+    dialog.showSaveDialog({
+        title: "Choose Path to Download File",
+        defaultPath: path.join(__dirname, 'Molod Spitz & DeSantis, PC Appearance Report.pdf'),
+        buttonLabel: 'Save'
+    }).then(path => {
+        console.log("Download Canceled: " + path.canceled);
+        if (!path.canceled) {
+            const downloadPath = path.filePath.toString()
+            console.log("Download Path: " + downloadPath);
+            event.reply('downloadPath', downloadPath);
+        }
+    }).catch(err => {
+        console.log(err);
+    });
+});

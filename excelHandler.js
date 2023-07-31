@@ -2,8 +2,6 @@ const XLSX = require('xlsx');
 const { ipcRenderer } = require('electron');
 const { jsPDF } = require('jspdf');
 
-// TODO: MAKE TABLE MODIFYABLE ****
-
 // loads and parses excel file using xlsx
 function loadexcel() {
     // get filetype (EBT or Court) to know how to parse & filter
@@ -105,13 +103,12 @@ function filterAndStyle(filetype) {
     var courtStor = undefined;
 
     // choose column to check date based on filetype
-    var delcol = "I";
+    var delcol = "G";
     var col = "H";
     var colspan = 6;
     if (filetype == "ebt") {
         col = "B";
         colspan = 5;
-        delcol = "G"
     };
 
     for (var i = 0; i < elements.length; i++) {
@@ -170,7 +167,7 @@ function filterAndStyle(filetype) {
     elem = document.getElementsByTagName("tr")[0];
     elem.parentNode.insertBefore(header, elem);
 
-    // fill in delete column and add in buttons
+    // fill in delete column and add in delete buttons
     var newChild;
     elements = document.getElementsByTagName('tr');
     for (var row = 2; row < elements.length; row++) {
@@ -203,6 +200,7 @@ function generatePDF() {
             orientation: 'l'
         });
         var elem = document.querySelector("#calendar");
+        // download pdf to chosen location
         doc.html(elem, {
             callback: function (doc) {
                 doc.save(filepath);

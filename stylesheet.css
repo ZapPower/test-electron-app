@@ -5,7 +5,7 @@ table, th, td {
 
 table {
     table-layout: fixed;
-    width: 100%;
+    width: 115%;
 }
 
 th {
@@ -45,11 +45,16 @@ select {
 }
 
 .calendarHead {
-    background-color: #6da07a;
+    background-color: lightgray;
     color: black;
     font-weight: bolder;
     font-size: larger;
-    text-align: center;
-    height: 50px;
-    line-height: 50px;
+    text-align: left;
+    height: 40px;
+    line-height: 40px;
+}
+
+.delCol {
+    background-color: lightgray;
+    column-width: 10px;
 }

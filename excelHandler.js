@@ -3,8 +3,6 @@ const { ipcRenderer } = require('electron');
 const { jsPDF } = require('jspdf');
 
 // TODO: MAKE TABLE MODIFYABLE ****
-// TODO: Add calendar head for calendar type
-// TODO: Add calendar type functionality
 
 // loads and parses excel file using xlsx
 function loadexcel() {
@@ -53,6 +51,7 @@ function getAppearanceDictCourt(sheet) {
         calendar[row]['Detail'] = sheet[row]['Type'];
         calendar[row]['County'] = sheet[row]['County'];
         calendar[row]['Date'] = sheet[row]['Appearance Date'];
+        calendar[row][''] = "";
     };
     return calendar;
 }
@@ -68,9 +67,12 @@ function getAppearanceDictEBT(sheet) {
         calendar[row]['Required Attendees'] = sheet[row]['Required Attendees'];
         calendar[row]['Location'] = sheet[row]['Location'];
         calendar[row]['Notes'] = "";
+        calendar[row][''] = "";
     };
     return calendar;
 }
+
+// <button aria-label='delete item' type='button' contenteditable='false' class='delButton' id='del${delCount}'>X</button>
 
 // creates and returns an HTML table consisting of the given dictionary using SheetJS
 function createAppearanceHTML(calendar) {
@@ -101,23 +103,32 @@ function filterAndStyle(filetype) {
     };
     var dateStor = undefined;
     var courtStor = undefined;
+
+    // choose column to check date based on filetype
+    var delcol = "I";
+    var col = "H";
+    var colspan = 6;
+    if (filetype == "ebt") {
+        col = "B";
+        colspan = 5;
+        delcol = "G"
+    };
+
     for (var i = 0; i < elements.length; i++) {
         elem = elements[i];
         // check if element is in first row
         if (elem.id.slice(-1) == "1" && elem.id.length == 6) {
             // make it a header
-            elem.outerHTML = `<th id="${elem.id}">${elem.innerText}</th>`;
+            if (elem.id.charAt(4) != delcol) {
+                elem.outerHTML = `<th id="${elem.id}">${elem.innerText}</th>`;
+            } else {
+                elem.outerHTML = `<th id="${elem.id}" class="delCol">${elem.innerText}</th>`;
+            }
             // decrement counter as this operation removes element from the list
             i--;
         };
 
         // check element is date
-        var col = "H";
-        var colspan = 6;
-        if (filetype == "ebt") {
-            col = "B";
-            colspan = 5;
-        };
         if (elem.id.charAt(4) == col) {
             // check if stored date matches. If not push new element at stored index & delete
             if (elem.innerText != dateStor) {
@@ -142,16 +153,38 @@ function filterAndStyle(filetype) {
             elements[i].remove();
             i--;
         };
+
+        //add delCol class to elements in delete column
+        if (elem.id.charAt(4) == delcol) {
+            elem.className = "delCol";
+        }
     }
 
+    // create calendar header
     const header = document.createElement("tr");
     headerText = "Court";
     if (filetype == "ebt") {
         headerText = "EBT";
     };
-    header.innerHTML = `<th id="calHead" colspan=${colspan} class="calendarHead">${headerText}  Calendar</th>`;
+    header.innerHTML = `<th id="calHead" colspan=${colspan + 1} class="calendarHead">${headerText}  Calendar</th>`;
     elem = document.getElementsByTagName("tr")[0];
     elem.parentNode.insertBefore(header, elem);
+
+    // fill in delete column and add in buttons
+    var newChild;
+    elements = document.getElementsByTagName('tr');
+    for (var row = 2; row < elements.length; row++) {
+        elem = elements[row];
+        elem.id = "row"+row;
+        if (elem.childElementCount == 1) {
+            newChild = document.createElement("td");
+            newChild.className = "delCol";
+            newChild.innerHTML = `<button aria-label='delete item' type='button' contenteditable='false' class='delButton' id='del${row}' onclick='delRow(${row})'>X</button>`;
+            elem.appendChild(newChild);
+        } else {
+            elem.lastChild.innerHTML = `<button aria-label='delete item' type='button' contenteditable='false' class='delButton' id='del${row}' onclick='delRow(${row})'>X</button>`;
+        };
+    };
 }
 
 // generate downloadable PDF & prompt client to save
@@ -180,4 +213,9 @@ function generatePDF() {
             }
         });
     });
+}
+
+// delete row function for row buttons
+function delRow(row) {
+    document.getElementById("row"+row).remove();
 }

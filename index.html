@@ -7,14 +7,22 @@
     </head>
     <body>
         <div style="background-color: #2a6038">
+            <div>
+                <label for="type">Choose a calendar type:</label>
+                <select name="type" id="typeSelect">
+                    <option value="court">Court</option>
+                    <option value="ebt">EBT</option>
+                </select>
+            </div>
             <script src="excelHandler.js"></script>
-            <label> Import excel sheet here: </label>
+            <label id="excelLabel"> Import excel sheet here: </label>
             <button type="button" id="excelButton" onclick="loadexcel()">Choose Excel File</button>
             <button type="button" id="createPDF" onclick="generatePDF()" style="float: right; visibility: hidden;">Save PDF</button>
             <p>
                 Sheet Name: <span id="sheetname"></span>
             </p>
+            <script src="viewHandler.js"></script>
         </div>
-      <span id="calendar"></span>
+      <span id="calendar" contenteditable></span>
     </body>
 </html>

@@ -7,7 +7,7 @@ const createWindow = () => {
         width: 800,
         height: 600,
         webPreferences: {
-            preload: path.join(__dirname, 'preload.js'),
+            // preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: true,
             contextIsolation: false
         },
@@ -35,9 +35,13 @@ app.on('window-all-closed', () => {
 
 // when received request for getting excel file, open system dialog to allow user to select the excel file
 // and send the file path back to the renderer process
-ipcMain.on('requestExcelFile', (event) => {
+ipcMain.on('requestExcelFile', (event, filetype) => {
+    extension = ".XLSX";
+    if (filetype == "ebt") {
+        extension = ".CSV";
+    }
     dialog.showOpenDialog({
-        title: "Select the excel file (.XLSX) to be used",
+        title: `Select the excel file (${extension}) to be used`,
         buttonLabel: "Submit"
     }).then(file => {
         console.log("File canceled: " + file.canceled);
@@ -53,10 +57,10 @@ ipcMain.on('requestExcelFile', (event) => {
 
 // when recieved request for getting download path, open save dialog and allow user to select path
 // then send the download path back to the renderer process
-ipcMain.on('requestDownloadPath', (event) => {
+ipcMain.on('requestDownloadPath', (event, pdfName) => {
     dialog.showSaveDialog({
         title: "Choose Path to Download File",
-        defaultPath: path.join(__dirname, 'Molod Spitz & DeSantis, PC Appearance Report.pdf'),
+        defaultPath: path.join(__dirname, pdfName),
         buttonLabel: 'Save'
     }).then(path => {
         console.log("Download Canceled: " + path.canceled);

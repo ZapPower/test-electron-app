@@ -3,6 +3,11 @@ table, th, td {
     border-collapse: collapse;
 }
 
+table {
+    table-layout: fixed;
+    width: 100%;
+}
+
 th {
     background-color: #2a6038;
     color: white;
@@ -30,4 +35,11 @@ div {
 
 body {
     background-color: #68ae7a;
+}
+
+select {
+    background-color: #68ae7a;
+    color:white;
+    border-radius: 5px;
+    font-family: Georgia, 'Times New Roman', Times, serif;
 }

@@ -2,10 +2,17 @@ const XLSX = require('xlsx');
 const {ipcRenderer} = require('electron');
 const { jsPDF } = require('jspdf');
 
+// TODO: MAKE TABLE MODIFYABLE ****
+// TODO: Add calendar head for calendar type
+// TODO: Add calendar type functionality
+
 // loads and parses excel file using xlsx
 function loadexcel() {
+    // get filetype (EBT or Court) to know how to parse & filter
+    var filetype = document.getElementById('typeSelect').value;
+
     // request the file from the main process
-    ipcRenderer.send('requestExcelFile');
+    ipcRenderer.send('requestExcelFile', filetype);
 
     // when file is sent back, open and parse it into JSON
     ipcRenderer.on('excelFile', (event, filepath) => {
@@ -16,20 +23,25 @@ function loadexcel() {
         document.getElementById('sheetname').innerText = sheet;
         // convert to JSON. Parse as string for easier formatting
         var sheetJSON = XLSX.utils.sheet_to_json(workbook.Sheets[sheet], {raw: false});
+        console.log(sheetJSON);
 
         // get new dictionary version
-        calendarDict = getAppearanceDict(sheetJSON);
+        if (filetype == 'court') {
+            calendarDict = getAppearanceDictCourt(sheetJSON);
+        } else {
+            calendarDict = getAppearanceDictEBT(sheetJSON);
+        };
         // apply HTML version of new dictionary
         document.getElementById('calendar').innerHTML = createAppearanceHTML(calendarDict);
         // filter and style the applied HTML
-        filterAndStyle();
+        filterAndStyle(filetype);
         // un-hide download PDF button
         document.getElementById('createPDF').style.visibility = 'visible';
     });   
 }
 
-// creates and returns a new dictionary with only the necessary data obtained from excel sheet
-function getAppearanceDict(sheet) {
+// creates and returns a new dictionary with only the necessary data obtained from excel sheet (for type Court)
+function getAppearanceDictCourt(sheet) {
     calendar = [];
     for (var row = 0; row < sheet.length; row++) {
         calendar.push({});
@@ -41,7 +53,22 @@ function getAppearanceDict(sheet) {
         calendar[row]['Detail'] = sheet[row]['Type'];
         calendar[row]['County'] = sheet[row]['County'];
         calendar[row]['Date'] = sheet[row]['Appearance Date'];
-    }
+    };
+    return calendar;
+}
+
+// creates and returns a new dictionary with only the necessary data obtained from excel sheet (for type EBT)
+function getAppearanceDictEBT(sheet) {
+    calendar = [];
+    for (var row = 0; row < sheet.length; row++) {
+        calendar.push({});
+        calendar[row]['Subject'] = sheet[row]['Subject'];
+        calendar[row]['Start Date'] = sheet[row]['Start Date'];
+        calendar[row]['Start Time'] = sheet[row]['Start Time'];
+        calendar[row]['Required Attendees'] = sheet[row]['Required Attendees'];
+        calendar[row]['Location'] = sheet[row]['Location'];
+        calendar[row]['Notes'] = "";
+    };
     return calendar;
 }
 
@@ -63,11 +90,15 @@ CSS:
 }
 */
 // filters the auto-generated HTML from SheetJS & styles the generated table
-function filterAndStyle() {
+function filterAndStyle(filetype) {
     // get table elements
     var elements = document.getElementsByTagName('td');
-    elements[7].remove();
-    elements[6].remove();
+    if (filetype == "court") {
+        elements[7].remove();
+        elements[6].remove();
+    } else {
+        elements[1].remove();
+    };
     var dateStor = undefined;
     var courtStor = undefined;
     for (var i = 0; i < elements.length; i++) {
@@ -78,39 +109,52 @@ function filterAndStyle() {
             elem.outerHTML = `<th id="${elem.id}">${elem.innerText}</th>`;
             // decrement counter as this operation removes element from the list
             i--;
-        }
+        };
 
         // check element is date
-        if (elem.id.charAt(4) == "H") {
+        var col = "H";
+        var colspan = 6;
+        if (filetype == "ebt") {
+            col = "B";
+            colspan = 5;
+        };
+        if (elem.id.charAt(4) == col) {
             // check if stored date matches. If not push new element at stored index & delete
             if (elem.innerText != dateStor) {
                 dateStor = elem.innerText;
                 newParent = document.createElement("tr");
-                newParent.innerHTML = `<th id="${elem.id}" colspan=6>${elem.innerText}</th>`;
+                newParent.innerHTML = `<th id="${elem.id}" colspan=${colspan}>${elem.innerText}</th>`;
                 elements[i].parentNode.parentNode.insertBefore(newParent, elements[i].parentNode);
             }
             elements[i].remove();
             i--;
-        }
+        };
 
         // check if elem is court
-        if (elem.id.charAt(4) == "G") {
+        if (filetype == "court" && elem.id.charAt(4) == "G") {
             // check if stored court matches. If not push new element at previous index & delete
             if (elem.innerText != courtStor) {
                 courtStor = elem.innerText;
                 newParent = document.createElement("tr");
-                newParent.innerHTML = `<th id="${elem.id}" colspan=6>${elem.innerText}</th>`;
+                newParent.innerHTML = `<th id="${elem.id}" colspan=${colspan}>${elem.innerText}</th>`;
                 elements[i].parentNode.parentNode.insertBefore(newParent, elements[i].parentNode);
             }
             elements[i].remove();
             i--;
-        }
+        };
     }
 }
 
 // generate downloadable PDF & prompt client to save
 function generatePDF() {
-    ipcRenderer.send('requestDownloadPath');
+    // get filetype
+    var filetype = document.getElementById('typeSelect').value;
+    var pdfName = "Molod Spitz & DeSantis, PC Court Appearance Report.pdf";
+    if (filetype == "ebt") {
+        pdfName = "Molod Spitz & DeSantis, PC EBT Appearance Report.pdf";
+    };
+
+    ipcRenderer.send('requestDownloadPath', pdfName);
 
     ipcRenderer.on('downloadPath', (event, filepath) => {
         var doc = new jsPDF({

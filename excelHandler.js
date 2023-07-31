@@ -103,10 +103,11 @@ function filterAndStyle(filetype) {
     var courtStor = undefined;
 
     // choose column to check date based on filetype
-    var delcol = "G";
+    var delcol = "I";
     var col = "H";
     var colspan = 6;
     if (filetype == "ebt") {
+        delcol = "G";
         col = "B";
         colspan = 5;
     };

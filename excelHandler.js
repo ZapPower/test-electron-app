@@ -19,7 +19,6 @@ function loadexcel() {
         document.getElementById('sheetname').innerText = sheet;
         // convert to JSON. Parse as string for easier formatting
         var sheetJSON = XLSX.utils.sheet_to_json(workbook.Sheets[sheet], {raw: false});
-        console.log(sheetJSON);
 
         // get new dictionary version
         if (filetype == 'court') {
